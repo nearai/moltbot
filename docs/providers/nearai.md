@@ -1,5 +1,5 @@
 ---
-summary: "Use NEAR AI private inference in Clawdbot"
+summary: "Use NEAR AI private inference in Moltbot"
 read_when:
   - You want private inference with Intel TDX/NVIDIA TEE
   - You want NEAR AI setup guidance
@@ -8,7 +8,7 @@ read_when:
 
 NEAR AI provides privacy-focused AI inference using confidential computing. All inference runs inside Intel TDX (Trust Domain Extensions) and NVIDIA TEE (Trusted Execution Environment), ensuring your prompts and responses are never logged or exposed to the host system.
 
-## Why NEAR AI in Clawdbot
+## Why NEAR AI in Moltbot
 
 - **Private inference** - all computation happens inside secure enclaves.
 - **Cryptographic verification** - outputs are signed inside TEE before leaving.
@@ -41,7 +41,7 @@ All AI outputs are cryptographically signed inside the TEE before leaving the se
 2. Go to your dashboard and generate an API key
 3. Copy your API key
 
-### 2. Configure Clawdbot
+### 2. Configure Moltbot
 
 **Option A: Environment Variable**
 
@@ -52,7 +52,7 @@ export NEARAI_API_KEY="your-api-key"
 **Option B: Interactive Setup (Recommended)**
 
 ```bash
-clawdbot onboard --auth-choice nearai-api-key
+moltbot onboard --auth-choice nearai-api-key
 ```
 
 This will:
@@ -63,7 +63,7 @@ This will:
 **Option C: Non-interactive**
 
 ```bash
-clawdbot onboard --non-interactive \
+moltbot onboard --non-interactive \
   --auth-choice nearai-api-key \
   --nearai-api-key "your-api-key"
 ```
@@ -71,7 +71,7 @@ clawdbot onboard --non-interactive \
 ### 3. Verify Setup
 
 ```bash
-clawdbot chat --model nearai/zai-org/GLM-4.7 "Hello, are you working?"
+moltbot chat --model nearai/zai-org/GLM-4.7 "Hello, are you working?"
 ```
 
 ## Model Selection
@@ -79,30 +79,34 @@ clawdbot chat --model nearai/zai-org/GLM-4.7 "Hello, are you working?"
 After setup, you can use any available NEAR AI model:
 
 ```bash
-clawdbot models set nearai/zai-org/GLM-4.7
-clawdbot models set nearai/deepseek-ai/DeepSeek-V3.1
+moltbot models set nearai/zai-org/GLM-4.7
+moltbot models set nearai/deepseek-ai/DeepSeek-V3.1
 ```
 
 List all available models:
 
 ```bash
-clawdbot models list | grep nearai
+moltbot models list | grep nearai
 ```
 
 ## Available Models
 
 > **Note:** The model list may change. See the latest available models at [cloud.near.ai/models](https://cloud.near.ai/models).
 
-| Model ID | Name | Context | Cost ($/M tokens) |
-|----------|------|---------|-------------------|
-| `deepseek-ai/DeepSeek-V3.1` | DeepSeek V3.1 | 128K | $1.05 in / $3.10 out |
-| `openai/gpt-oss-120b` | GPT OSS 120B | 131K | $0.15 in / $0.55 out |
-| `Qwen/Qwen3-30B-A3B-Instruct-2507` | Qwen3 30B | 262K | $0.15 in / $0.55 out |
-| `zai-org/GLM-4.7` | GLM 4.7 (default) | 131K | $0.85 in / $3.30 out |
+| Model ID | Name | Privacy | Reasoning | Context | Cost ($/M tokens) |
+|----------|------|---------|-----------|---------|-------------------|
+| `anthropic/claude-sonnet-4-5` | Claude Sonnet 4.5 | Anonymized | ✅ | 200K | $3.00 in / $15.50 out |
+| `black-forest-labs/FLUX.2-klein-4B` | FLUX.2-klein-4B | Private | ❌ | 128K | $1.00 in / $1.00 out |
+| `deepseek-ai/DeepSeek-V3.1` | DeepSeek V3.1 | Private | ❌ | 128K | $1.05 in / $3.10 out |
+| `google/gemini-3-pro` | Gemini 3 Pro Preview | Anonymized | ✅ | 1M | $1.25 in / $15.00 out |
+| `openai/gpt-5.2` | OpenAI GPT-5.2 | Anonymized | ✅ | 400K | $1.80 in / $15.50 out |
+| `openai/gpt-oss-120b` | GPT OSS 120B | Private | ✅ | 131K | $0.15 in / $0.55 out |
+| `Qwen/Qwen3-30B-A3B-Instruct-2507` | Qwen3 30B | Private | ❌ | 262K | $0.15 in / $0.55 out |
+| `zai-org/GLM-4.7` | GLM 4.7 (default) | Private | ✅ | 131K | $0.85 in / $3.30 out |
 
-## Configure via `clawdbot configure`
+## Configure via `moltbot configure`
 
-1. Run `clawdbot configure`
+1. Run `moltbot configure`
 2. Select **Model/auth**
 3. Choose **NEAR AI**
 
@@ -110,16 +114,28 @@ clawdbot models list | grep nearai
 
 ```bash
 # Use default model (GLM 4.7)
-clawdbot chat --model nearai/zai-org/GLM-4.7
+moltbot chat --model nearai/zai-org/GLM-4.7
 
-# Use DeepSeek for reasoning tasks
-clawdbot chat --model nearai/deepseek-ai/DeepSeek-V3.1
+# Use Claude Sonnet 4.5 for advanced reasoning
+moltbot chat --model nearai/anthropic/claude-sonnet-4-5
+
+# Use Gemini 3 Pro for ultra-long context (1M tokens!)
+moltbot chat --model nearai/google/gemini-3-pro
+
+# Use GPT-5.2 for deep reasoning
+moltbot chat --model nearai/openai/gpt-5.2
+
+# Use DeepSeek for cost-effective tasks
+moltbot chat --model nearai/deepseek-ai/DeepSeek-V3.1
 
 # Use Qwen for long context (262K!)
-clawdbot chat --model nearai/Qwen/Qwen3-30B-A3B-Instruct-2507
+moltbot chat --model nearai/Qwen/Qwen3-30B-A3B-Instruct-2507
+
+# Use FLUX for image generation
+moltbot chat --model nearai/black-forest-labs/FLUX.2-klein-4B
 
 # Send a message
-clawdbot agent --message "Explain quantum computing" --model nearai/zai-org/GLM-4.7
+moltbot agent --message "Explain quantum computing" --model nearai/zai-org/GLM-4.7
 ```
 
 ## Troubleshooting
@@ -128,7 +144,7 @@ clawdbot agent --message "Explain quantum computing" --model nearai/zai-org/GLM-
 
 ```bash
 echo $NEARAI_API_KEY
-clawdbot models list | grep nearai
+moltbot models list | grep nearai
 ```
 
 Ensure the environment variable is set correctly.
